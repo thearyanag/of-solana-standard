@@ -72,6 +72,12 @@ The `mint` action allows the user to mint an NFT. Clients that support relaying 
 
 The target property must be a valid [CAIP-10](https://github.com/ChainAgnostic/CAIPs/blob/main/CAIPs/caip-10.md) address, plus an optional token ID appended with a `:`.
 
+# Solana mainnet 
+solana:101:DjHXsyf4kR2ydj982cQYm6ZWWmSGhb9jspuav9CWVACc
+
+# Solana Devnet
+solana:103:DjHXsyf4kR2ydj982cQYm6ZWWmSGhb9jspuav9CWVACc
+
 ## `tx`
 
 The `tx` action allows a frame to send a transaction request to the user's connected wallet. Unlike other action types, tx actions have multiple steps.
@@ -82,8 +88,8 @@ First, the client makes a POST request to the `target` URL to fetch data about t
 ```ts
 type TransactionTargetResponse {
   chainId: string;
-  method: "eth_sendTransaction";
-  params: EthSendTransactionParams;
+  method: "signAndSendTransaction";
+  params: SolSendTransactionParams;
 }
 ```
 
@@ -91,17 +97,17 @@ type TransactionTargetResponse {
 
 If the method is `eth_sendTransaction` and the chain is an Ethereum EVM chain, the param must be of type `EthSendTransactionParams`:
 
-- `abi`: JSON ABI which **MUST** include encoded function type and **SHOULD** include potential error types. Can be empty.
+- `idl`: JSON ABI which **MUST** include encoded function type and **SHOULD** include potential error types. Can be empty.
 - `to`: transaction recipient
 - `value`: value to send with the transaction in wei (optional)
 - `data`: transaction calldata (optional)
 
 ```ts
-type EthSendTransactionParams {
-  abi: Abi | [];
-  to: `0x${string}`;
+type SolSendTransactionParams {
+  idl: IDL | [];
+  to: `${string}`;
   value?: string;
-  data?: `0x${string}`;
+  data?: `${string}`;
 }
 ```
 
@@ -109,11 +115,11 @@ Example:
 
 ```json
 {
-  "chainId": "eip155:1",                                // The chain ID of the transaction
-  "method": "eth_sendTransaction",                      // The method to call on the wallet
+  "chainId": "sol:101",                                // The chain ID of the transaction
+  "method": "signAndSendTransaction",                      // The method to call on the wallet
   "params": {
-    "abi": [...],                                       // JSON ABI of the function selector and any errors
-    "to": "0x0000000000000000000000000000000000000001", // The recipient of the transaction
+    "idl": [...],                                       // JSON ABI of the function selector and any errors
+    "to": "0000000000000000000000000000000000000001", // The recipient of the transaction
     "data": "0x00",                                     // Transaction calldata
     "value": "123456789",                               // Value to send with the transaction
   },
